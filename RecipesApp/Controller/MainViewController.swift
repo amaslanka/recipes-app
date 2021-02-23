@@ -7,12 +7,15 @@
 
 import UIKit
 import PureLayout
+import RxSwift
+import RxCocoa
+
 
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-//    var didSetupConstraints = false
-//    var bannerView = UIView(forAutoLayout: ())
-//    var label = UILabel(forAutoLayout: ())
+    private let viewModel = MainViewModel()
+    private let disposeBag = DisposeBag()
+    private var categories = [RecipeCategory]()
     
     let recipeCellReuseId = "recipeCellReuseId"
     
@@ -27,51 +30,68 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return tableView
     }()
     
+    lazy var mainView: MainView = {
+        return MainView(tableView: self.tableView)
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Recipes"
         navigationController?.navigationBar.isTranslucent = false
-        view = MainView(tableView: tableView)
+        view = mainView
+        
+        bindViewModel()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: recipeCellReuseId) as? RecipeCategoryCell else {
             return UITableViewCell()
         }
+        cell.setCategory(category: categories[indexPath.row])
         return cell
+    }
+    
+    func updateTitle(text: String) {
+        title = text
+    }
+    
+    func updateCategories(categories: [RecipeCategory]) {
+        self.categories = categories
+        tableView.reloadData()
+    }
+    
+    func handleEvent(event: MainEvent) {
+        // TODO: Handle each type of MainEvent
     }
 
 }
 
-//extension MainViewController {
-//
-//    override func loadView() {
-//        view = UIView()
-//        view.backgroundColor = #colorLiteral(red: 0.1215686277, green: 0.01176470611, blue: 0.4235294163, alpha: 1)
-//        view.addSubview(bannerView)
-//        bannerView.backgroundColor = UIColor.black
-//        label.text = "Lorem ipsum dolor sit amet, consectetur   adipiscing elit. Fusce sit amet tortor ultricies, iaculis diam quis, molestie odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. Mauris eget interdum libero. Nulla at ipsum lectus. Praesent tristique nisl in tincidunt tempus. Nam purus metus, mattis eu fermentum et, ultricies in enim. Donec placerat laoreet dolor, quis tincidunt diam. Vivamus nisi ligula."
-//        label.numberOfLines = 0
-//        view.addSubview(label)
-//        view.setNeedsUpdateConstraints()
-//
-//    }
-//
-//    override func updateViewConstraints() {
-//        if (!didSetupConstraints) {
-//            bannerView.autoSetDimensions(to: CGSize(width:         self.view.frame.width, height: 300))
-//            bannerView.autoPinEdge(toSuperviewEdge: .top, withInset: 30)
-//            bannerView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 15)
-//            bannerView.autoPinEdge(toSuperviewEdge: .leading, withInset: 15)
-//            label.autoPinEdge(.top, to: .bottom, of: bannerView, withOffset: 50)
-//            label.autoPinEdge(toSuperviewEdge: .trailing, withInset: 15)
-//            label.autoPinEdge(toSuperviewEdge: .leading, withInset: 15)
-//            didSetupConstraints = true
-//        }
-//        super.updateViewConstraints()
-//    }
-//}
+extension MainViewController {
+    func bindViewModel() {
+        mainView.searchView
+            .rx
+            .text
+            .orEmpty
+            .subscribe(onNext: { text in
+                self.viewModel.onSearchBarTextChanged(text: text)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.viewState
+            .debug()
+            .subscribe(onNext: { viewState in
+                self.updateTitle(text: viewState.title.text)
+                self.updateCategories(categories: viewState.categories.list)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.events
+            .subscribe(onNext: { event in
+                self.handleEvent(event: event)
+            })
+            .disposed(by: disposeBag)
+    }
+}
