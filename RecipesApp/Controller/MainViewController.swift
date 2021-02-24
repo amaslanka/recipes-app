@@ -33,11 +33,16 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     lazy var mainView: MainView = {
         return MainView(tableView: self.tableView)
     }()
-    
+
+    override func loadView() {
+        super.loadView()
+
+        view = mainView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isTranslucent = false
-        view = mainView
         
         bindViewModel()
     }
