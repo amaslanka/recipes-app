@@ -14,11 +14,27 @@ class MainViewModel: BaseViewModel<MainViewState, PartialMainViewState, MainEven
     private let viewStateReducer = MainReducer()
     
     let initialTitle = "Recipes"
-    var categories = [RecipeCategory]()
+    var categoriesDisposable: Disposable? = nil
+    
+    override init() {
+        super.init()
+        categoriesDisposable = RecipeCategoriesRepository.shared
+            .getRecipeCategories()
+            .subscribe(onNext: { categories in
+                self.updateCategoriesList(categories)
+            })
+    }
     
     func onSearchBarTextChanged(text: String) {
-        let category = RecipeCategory(imageUrl: "", name: text)
-        categories.append(category)
+        categoriesDisposable?.dispose()
+        categoriesDisposable = RecipeCategoriesRepository.shared
+            .getRecipesByName(name: text)
+            .subscribe(onNext: { categories in
+                self.updateCategoriesList(categories)
+            })
+    }
+    
+    private func updateCategoriesList(_ categories: [RecipeCategory]) {
         let categoriesState: PartialMainViewState = PartialMainViewState.Categories(categories: categories)
         updatePartialViewState(partialStates: [categoriesState], disposeBag: disposeBag)
     }
