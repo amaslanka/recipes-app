@@ -15,16 +15,20 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     private let viewModel = MainViewModel()
     private let disposeBag = DisposeBag()
-    private var recipes = [Recipe]()
+    private let recipeCellReuseId = "recipeCellReuseId"
+    private let transitionDuration = 0.35
+    private let userInputDebounceTimeMs = 500
     
-    let recipeCellReuseId = "recipeCellReuseId"
+    private let emptyMessage = "No recipes found"
+    
+    private var recipes = [Recipe]()
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(RecipeCell.self, forCellReuseIdentifier: recipeCellReuseId)
-        tableView.estimatedRowHeight = RecipeCell.CELL_HEIGHT
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = RecipeCell.CELL_HEIGHT
         tableView.delegate = self
         tableView.dataSource = self
         return tableView
@@ -48,6 +52,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if recipes.count == 0 {
+            self.tableView.setEmptyMessage(emptyMessage)
+        } else {
+            self.tableView.restore()
+        }
+        
         return recipes.count
     }
     
@@ -65,7 +75,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func updateRecipes(recipes: [Recipe]) {
         self.recipes = recipes
-        tableView.reloadData()
+        UIView.transition(
+            with: tableView,
+            duration: transitionDuration,
+            options: .transitionCrossDissolve,
+            animations: { self.tableView.reloadData() }
+        )
     }
     
     func handleEvent(event: MainEvent) {
@@ -80,16 +95,18 @@ extension MainViewController {
             .rx
             .text
             .orEmpty
+            .asObservable()
+            .debounce(.milliseconds(userInputDebounceTimeMs), scheduler: MainScheduler.instance)
             .subscribe(onNext: { text in
                 self.viewModel.onSearchBarTextChanged(text: text)
             })
             .disposed(by: disposeBag)
         
         viewModel.viewState
-            .debug()
             .subscribe(onNext: { viewState in
                 self.updateTitle(text: viewState.title.text)
                 self.updateRecipes(recipes: viewState.recipes.list)
+                print("Updated recipes list size: \(viewState.recipes.list.count)")
             })
             .disposed(by: disposeBag)
         

@@ -15,6 +15,7 @@ class MainViewModel: BaseViewModel<MainViewState, PartialMainViewState, MainEven
     
     let initialTitle = "Recipes"
     var categoriesDisposable: Disposable? = nil
+    var scheduler = ConcurrentDispatchQueueScheduler(qos: .background)
     
     override init() {
         super.init()
@@ -29,6 +30,8 @@ class MainViewModel: BaseViewModel<MainViewState, PartialMainViewState, MainEven
         categoriesDisposable?.dispose()
         categoriesDisposable = RecipeRepository.shared
             .getRecipesByName(name: text)
+            .subscribe(on: scheduler)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { categories in
                 self.updateCategoriesList(categories)
             })

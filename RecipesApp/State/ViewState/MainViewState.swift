@@ -46,7 +46,7 @@ class PartialMainViewState {
         
         func copy(with zone: NSZone? = nil) -> Any {
             let copy = Recipes()
-            copy.list = list.map { Recipe(recipeCategory: $0) }
+            copy.list = list.map { Recipe(recipe: $0) }
             return copy
         }
     }

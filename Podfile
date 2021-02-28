@@ -7,6 +7,7 @@ use_frameworks!
 target 'RecipesApp' do
   # Pods for RecipesApp
   pod 'PureLayout', '~> 3.1.6'
+  pod 'Kingfisher', '~> 6.0'
   pod 'RxSwift', '6.0.0'
   pod 'RxCocoa', '6.0.0'
 end
