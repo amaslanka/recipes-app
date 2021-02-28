@@ -17,8 +17,8 @@ struct MainReducer : Reducer {
         switch partialViewState {
         case is PartialMainViewState.Title:
             copy.title = partialViewState as! PartialMainViewState.Title
-        case is PartialMainViewState.Categories:
-            copy.categories = partialViewState as! PartialMainViewState.Categories
+        case is PartialMainViewState.Recipes:
+            copy.recipes = partialViewState as! PartialMainViewState.Recipes
         default:
             fatalError("Unsupported partial state!")
         }

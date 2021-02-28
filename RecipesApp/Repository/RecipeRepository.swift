@@ -8,36 +8,36 @@
 import Foundation
 import RxSwift
 
-class RecipeCategoriesRepository {
+class RecipeRepository {
     
-    static let shared = RecipeCategoriesRepository()
+    static let shared = RecipeRepository()
         
     private let allRecipes = [
-        RecipeCategory(
+        Recipe(
             imageUrl: "https://res.cloudinary.com/dk4ocuiwa/image/upload/v1575163942/RecipesApi/IMG_67561180x180c6a2.jpg",
             name: "Pie"
         ),
-        RecipeCategory(
+        Recipe(
             imageUrl: "https://res.cloudinary.com/dk4ocuiwa/image/upload/v1575163942/RecipesApi/490284baac.jpg",
             name: "Curry"
         ),
-        RecipeCategory(
+        Recipe(
             imageUrl: "https://res.cloudinary.com/dk4ocuiwa/image/upload/v1575163942/RecipesApi/2888116c52.jpg",
             name: "Cookies"
         ),
-        RecipeCategory(
+        Recipe(
             imageUrl: "https://res.cloudinary.com/dk4ocuiwa/image/upload/v1575163942/RecipesApi/bakeddoughnutsa945.jpg",
             name: "Baked Doughnuts"
         ),
-        RecipeCategory(
+        Recipe(
             imageUrl: "https://res.cloudinary.com/dk4ocuiwa/image/upload/v1575163942/RecipesApi/popcorn243x2003a375fc9.jpg",
             name: "Popcorn"
         ),
-        RecipeCategory(
+        Recipe(
             imageUrl: "https://res.cloudinary.com/dk4ocuiwa/image/upload/v1575163942/RecipesApi/2285894885.jpg",
             name: "Pancakes"
         ),
-        RecipeCategory(
+        Recipe(
             imageUrl: "https://res.cloudinary.com/dk4ocuiwa/image/upload/v1575163942/RecipesApi/1161646_MEDIUMcf14.jpg",
             name: "Others"
         )
@@ -45,11 +45,11 @@ class RecipeCategoriesRepository {
     
     private init() { }
     
-    func getRecipeCategories() -> Observable<[RecipeCategory]> {
+    func getRecipes() -> Observable<[Recipe]> {
         return Observable.just(allRecipes)
     }
     
-    func getRecipesByName(name: String) -> Observable<[RecipeCategory]> {
+    func getRecipesByName(name: String) -> Observable<[Recipe]> {
         return Observable.just(allRecipes)
             .map {
                 if name.isEmpty {

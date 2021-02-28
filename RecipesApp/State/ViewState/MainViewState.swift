@@ -11,12 +11,12 @@ import Foundation
 class MainViewState : NSObject, NSCopying {
     
     var title = PartialMainViewState.Title()
-    var categories = PartialMainViewState.Categories()
+    var recipes = PartialMainViewState.Recipes()
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = MainViewState()
         copy.title = title.copy() as! PartialMainViewState.Title
-        copy.categories = categories.copy() as! PartialMainViewState.Categories
+        copy.recipes = recipes.copy() as! PartialMainViewState.Recipes
         return copy
     }
 }
@@ -37,16 +37,16 @@ class PartialMainViewState {
         }
     }
 
-    class Categories : PartialMainViewState, NSCopying {
-        var list = [RecipeCategory]()
+    class Recipes : PartialMainViewState, NSCopying {
+        var list = [Recipe]()
         
-        init(categories: [RecipeCategory] = [RecipeCategory]()) {
+        init(categories: [Recipe] = [Recipe]()) {
             self.list = categories
         }
         
         func copy(with zone: NSZone? = nil) -> Any {
-            let copy = Categories()
-            copy.list = list.map { RecipeCategory(recipeCategory: $0) }
+            let copy = Recipes()
+            copy.list = list.map { Recipe(recipeCategory: $0) }
             return copy
         }
     }

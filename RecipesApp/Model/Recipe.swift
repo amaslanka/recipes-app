@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RecipeCategory {
+struct Recipe {
     let imageUrl: String
     let name: String
     
@@ -16,8 +16,8 @@ struct RecipeCategory {
         self.name = name
     }
     
-    init(recipeCategory: RecipeCategory) {
-        self.imageUrl = recipeCategory.imageUrl
-        self.name = recipeCategory.name
+    init(recipe: Recipe) {
+        self.imageUrl = recipe.imageUrl
+        self.name = recipe.name
     }
 }

@@ -15,15 +15,15 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     private let viewModel = MainViewModel()
     private let disposeBag = DisposeBag()
-    private var categories = [RecipeCategory]()
+    private var recipes = [Recipe]()
     
     let recipeCellReuseId = "recipeCellReuseId"
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(RecipeCategoryCell.self, forCellReuseIdentifier: recipeCellReuseId)
-        tableView.estimatedRowHeight = RecipeCategoryCell.CELL_HEIGHT
+        tableView.register(RecipeCell.self, forCellReuseIdentifier: recipeCellReuseId)
+        tableView.estimatedRowHeight = RecipeCell.CELL_HEIGHT
         tableView.rowHeight = UITableView.automaticDimension
         tableView.delegate = self
         tableView.dataSource = self
@@ -48,14 +48,14 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return recipes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: recipeCellReuseId) as? RecipeCategoryCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: recipeCellReuseId) as? RecipeCell else {
             return UITableViewCell()
         }
-        cell.setCategory(category: categories[indexPath.row])
+        cell.setRecipe(recipe: recipes[indexPath.row])
         return cell
     }
     
@@ -63,8 +63,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         title = text
     }
     
-    func updateCategories(categories: [RecipeCategory]) {
-        self.categories = categories
+    func updateRecipes(recipes: [Recipe]) {
+        self.recipes = recipes
         tableView.reloadData()
     }
     
@@ -89,7 +89,7 @@ extension MainViewController {
             .debug()
             .subscribe(onNext: { viewState in
                 self.updateTitle(text: viewState.title.text)
-                self.updateCategories(categories: viewState.categories.list)
+                self.updateRecipes(recipes: viewState.recipes.list)
             })
             .disposed(by: disposeBag)
         

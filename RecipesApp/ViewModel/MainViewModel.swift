@@ -18,8 +18,8 @@ class MainViewModel: BaseViewModel<MainViewState, PartialMainViewState, MainEven
     
     override init() {
         super.init()
-        categoriesDisposable = RecipeCategoriesRepository.shared
-            .getRecipeCategories()
+        categoriesDisposable = RecipeRepository.shared
+            .getRecipes()
             .subscribe(onNext: { categories in
                 self.updateCategoriesList(categories)
             })
@@ -27,15 +27,15 @@ class MainViewModel: BaseViewModel<MainViewState, PartialMainViewState, MainEven
     
     func onSearchBarTextChanged(text: String) {
         categoriesDisposable?.dispose()
-        categoriesDisposable = RecipeCategoriesRepository.shared
+        categoriesDisposable = RecipeRepository.shared
             .getRecipesByName(name: text)
             .subscribe(onNext: { categories in
                 self.updateCategoriesList(categories)
             })
     }
     
-    private func updateCategoriesList(_ categories: [RecipeCategory]) {
-        let categoriesState: PartialMainViewState = PartialMainViewState.Categories(categories: categories)
+    private func updateCategoriesList(_ categories: [Recipe]) {
+        let categoriesState: PartialMainViewState = PartialMainViewState.Recipes(categories: categories)
         updatePartialViewState(partialStates: [categoriesState], disposeBag: disposeBag)
     }
     

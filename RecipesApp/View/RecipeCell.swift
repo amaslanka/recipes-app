@@ -1,5 +1,5 @@
 //
-//  RecipeCategoryCell.swift
+//  RecipeCell.swift
 //  Recipes App
 //
 //  Created by Artur Maslanka on 06/12/2020.
@@ -8,7 +8,7 @@
 import UIKit
 import PureLayout
 
-class RecipeCategoryCell: UITableViewCell {
+class RecipeCell: UITableViewCell {
     
     private static let PICTURE_SIZE: CGFloat = 64.0
     private static let MARGIN_SIZE: CGFloat = 4
@@ -17,8 +17,8 @@ class RecipeCategoryCell: UITableViewCell {
     
     lazy var picture: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "realm_logo.png"))
-        imageView.autoSetDimensions(to: CGSize(width: RecipeCategoryCell.PICTURE_SIZE, height: RecipeCategoryCell.PICTURE_SIZE))
-        imageView.layer.cornerRadius = RecipeCategoryCell.PICTURE_SIZE / 2
+        imageView.autoSetDimensions(to: CGSize(width: RecipeCell.PICTURE_SIZE, height: RecipeCell.PICTURE_SIZE))
+        imageView.layer.cornerRadius = RecipeCell.PICTURE_SIZE / 2
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -37,17 +37,17 @@ class RecipeCategoryCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         
         let pictureInsets = UIEdgeInsets(
-            top: RecipeCategoryCell.MARGIN_SIZE,
+            top: RecipeCell.MARGIN_SIZE,
             left: 16,
-            bottom: RecipeCategoryCell.MARGIN_SIZE,
+            bottom: RecipeCell.MARGIN_SIZE,
             right: 0
         )
         picture.autoPinEdgesToSuperviewEdges(with: pictureInsets, excludingEdge: .right)
 
         let titleInsets = UIEdgeInsets(
-            top: RecipeCategoryCell.MARGIN_SIZE,
+            top: RecipeCell.MARGIN_SIZE,
             left: 0,
-            bottom: RecipeCategoryCell.MARGIN_SIZE,
+            bottom: RecipeCell.MARGIN_SIZE,
             right: 16
         )
         titleLabel.autoPinEdgesToSuperviewEdges(with: titleInsets, excludingEdge: .left)
@@ -58,7 +58,7 @@ class RecipeCategoryCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
-    func setCategory(category: RecipeCategory) {
-        titleLabel.text = category.name
+    func setRecipe(recipe: Recipe) {
+        titleLabel.text = recipe.name
     }
 }
